@@ -1,1 +1,54 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: "Satoshi Regular";
+  font-style: normal;
+  font-weight: normal;
+  src:
+    local("Satoshi Regular"),
+    url("/assets/fonts/Satoshi-Regular.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Satoshi Regular";
+  font-style: normal;
+  font-weight: bold;
+  src:
+    local("Satoshi Bold"),
+    url("/assets/fonts/Satoshi-Bold.woff") format("woff");
+}
+
+:root {
+  --color-test: #433b88;
+}
+
+@theme {
+  --color-background: #f5f4ff; /* softer lavender, higher brightness */
+  --color-foreground: #2d2b55; /* deep indigo for text */
+
+  --color-primary: #a59cf0; /* mid lavender */
+  --color-primary-darker: #4a3fb3; /* strong violet for buttons/headers */
+
+  --color-secondary: #f9bece; /* pastel pink accent */
+  --color-secondary-darker: #e68aa3; /* richer pink for hover/contrast */
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: "Satoshi Regular", sans-serif;
+  }
+}
+
+@layer utilities {
+  .primary-button {
+    @apply bg-primary-darker hover:bg-primary-darker/90 text-white 
+            rounded-lg py-2 text-sm font-medium transition-all duration-300 
+            cursor-pointer disabled:opacity-50 hover:shadow-[0_0_10px_rgba(139,92,246,0.5)];
+  }
+}
