@@ -1,6 +1,7 @@
 import type { AuthResponse, User } from "../types";
 
-const BASE = "/api/auth";
+// const BASE = `${process.env.BACKEND_URL}/api/auth`;
+const BASE = `${import.meta.env.VITE_BACKEND_URL}/api/auth`;
 
 function authHeaders(): HeadersInit {
   const token = localStorage.getItem("huntr:token");

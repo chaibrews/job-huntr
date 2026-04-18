@@ -1,6 +1,6 @@
 import type { Application, Status } from "../types";
 
-const BASE = "/api/applications";
+const BASE = `${import.meta.env.VITE_BACKEND_URL}/api/applications`;
 
 // Centralized header builder — every protected request needs this
 function authHeaders(): HeadersInit {
