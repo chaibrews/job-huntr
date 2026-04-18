@@ -55,7 +55,7 @@ export default function LoginPage() {
             <input
               type="password"
               value={password}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               required
               className="bg-background border border-primary-darker/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-violet-400"
             />
