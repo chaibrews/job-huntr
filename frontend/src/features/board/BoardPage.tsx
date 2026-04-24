@@ -83,8 +83,8 @@ export default function BoardPage() {
         }
         headerRight={
           <button
-            onClick={() => setShowForm(true)}
-            className="primary-button flex items-center gap-1.5 px-4 py-2 text-sm"
+            onClick={() => openForm("SAVED")}
+            className="primary-button flex items-center gap-1.5 px-4 text-sm"
           >
             <Plus size={15} />
             <span className="text-sm">New Application</span>
