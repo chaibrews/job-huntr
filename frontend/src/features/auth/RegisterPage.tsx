@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuthContext } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
-  const { register } = useAuth();
+  const { register } = useAuthContext();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
