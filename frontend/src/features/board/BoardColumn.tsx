@@ -10,6 +10,7 @@ interface Props {
   label: string;
   applications: Application[];
   onDelete: (id: string) => void;
+  onArchive: (id: string) => void;
   onAddClick?: (status: Status) => void;
 }
 
@@ -18,6 +19,7 @@ export default function BoardColumn({
   label,
   applications,
   onDelete,
+  onArchive,
   onAddClick,
 }: Props) {
   return (
@@ -51,7 +53,12 @@ export default function BoardColumn({
           </p>
         )}
         {applications.map((app) => (
-          <AppCard key={app.id} app={app} onDelete={onDelete} />
+          <AppCard
+            key={app.id}
+            app={app}
+            onDelete={onDelete}
+            onArchive={onArchive}
+          />
         ))}
       </div>
     </div>

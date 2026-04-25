@@ -57,6 +57,11 @@ export function useApplications() {
     setApplications((prev) => prev.filter((a) => a.id !== id));
   }
 
+  async function archive(id: string) {
+    const app = await api.updateApplicationStatus(id, "ARCHIVED");
+    setApplications((prev) => prev.map((a) => (a.id === id ? app : a)));
+  }
+
   return {
     applications,
     loading,
@@ -65,6 +70,7 @@ export function useApplications() {
     update,
     changeStatus,
     remove,
+    archive,
     refetch: fetchAll,
   };
 }

@@ -1,24 +1,23 @@
 // Individual application card shown in kanban columns.
-// Displays company avatar, company name, location, role, and tags.
-// The … button reveals a delete action without navigating away.
+// The … menu reveals Delete and Archive actions.
 
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { MoreHorizontal, Trash2, Archive } from "lucide-react";
 import type { Application } from "../types";
 import CompanyAvatar from "./CompanyAvatar";
 
 interface Props {
   app: Application;
   onDelete: (id: string) => void;
+  onArchive: (id: string) => void;
 }
 
-export default function AppCard({ app, onDelete }: Props) {
+export default function AppCard({ app, onDelete, onArchive }: Props) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Close menu when clicking outside
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -32,7 +31,7 @@ export default function AppCard({ app, onDelete }: Props) {
   return (
     <div
       onClick={() => navigate(`/applications/${app.id}`)}
-      className="bg-white rounded-xl   p-4 cursor-pointer
+      className="bg-white rounded-xl p-4 cursor-pointer
                  hover:shadow-md hover:border-primary/30 transition-all duration-150 group"
     >
       {/* Top row: avatar + company + location + menu */}
@@ -59,7 +58,7 @@ export default function AppCard({ app, onDelete }: Props) {
         >
           <button
             onClick={() => setMenuOpen((o) => !o)}
-            className="w-6 h-6 rounded-md flex items-center justify-center
+            className="w-6 h-6 rounded-md flex items-center justify-center cursor-pointer
                        text-foreground/30 hover:text-foreground/60 hover:bg-background
                        transition-colors opacity-0 group-hover:opacity-100"
           >
@@ -67,16 +66,30 @@ export default function AppCard({ app, onDelete }: Props) {
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 top-7 z-20 bg-white border border-shadow rounded-lg shadow-lg overflow-hidden w-36">
+            <div className="absolute right-0 top-7 z-20 bg-white border border-shadow rounded-lg shadow-lg overflow-hidden w-40">
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation;
+                  onArchive(app.id);
+                  setMenuOpen(false);
+                }}
+                className="flex items-center gap-2 w-full px-3 py-2 text-xs text-foreground/60
+                           hover:bg-background cursor-pointer transition-colors"
+              >
+                <Archive size={12} />
+                Archive
+              </button>
+              <div className="border-t border-shadow" />
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
                   if (confirm(`Delete application to ${app.company}?`)) {
                     onDelete(app.id);
                   }
                   setMenuOpen(false);
                 }}
                 className="flex items-center gap-2 w-full px-3 py-2 text-xs text-red-500
-                           hover:bg-red-50 transition-colors"
+                           hover:bg-red-50 cursor-pointer transition-colors"
               >
                 <Trash2 size={12} />
                 Delete

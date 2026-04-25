@@ -10,7 +10,7 @@ const ApplicationBody = z.object({
   company: z.string().min(1),
   role: z.string().min(1),
   status: z
-    .enum(["SAVED", "APPLIED", "INTERVIEW", "OFFER", "REJECTED"])
+    .enum(["SAVED", "APPLIED", "INTERVIEW", "OFFER", "REJECTED", "ARCHIVED"])
     .optional(),
   workSetup: z.enum(["ONSITE", "HYBRID", "REMOTE"]).nullable().optional(),
   location: z.string().nullable().optional(),
@@ -30,7 +30,14 @@ const ApplicationBody = z.object({
 
 // Schema specifically for status updates
 const StatusBody = z.object({
-  status: z.enum(["SAVED", "APPLIED", "INTERVIEW", "OFFER", "REJECTED"]),
+  status: z.enum([
+    "SAVED",
+    "APPLIED",
+    "INTERVIEW",
+    "OFFER",
+    "REJECTED",
+    "ARCHIVED",
+  ]),
 });
 
 // ── GET ALL ───────────────────────────────────────────

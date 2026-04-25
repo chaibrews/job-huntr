@@ -26,8 +26,15 @@ const TAB_STATUSES: Record<Tab, Status[]> = {
 };
 
 export default function BoardPage() {
-  const { applications, loading, error, remove, create, changeStatus } =
-    useApplications();
+  const {
+    applications,
+    loading,
+    error,
+    remove,
+    archive,
+    create,
+    changeStatus,
+  } = useApplications();
   const [activeTab, setActiveTab] = useState<Tab>("applications");
   const [showForm, setShowForm] = useState(false);
   const [defaultStatus, setDefaultStatus] = useState<Status>("SAVED");
@@ -101,7 +108,7 @@ export default function BoardPage() {
             <button
               key={key}
               onClick={() => setActiveTab(key)}
-              className={`pb-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
+              className={`pb-3 text-sm font-medium transition-colors cursor-pointer border-b-2 -mb-px ${
                 activeTab === key
                   ? "text-primary-darker border-primary-darker"
                   : "text-foreground/40 border-transparent hover:text-foreground/70"
@@ -137,6 +144,7 @@ export default function BoardPage() {
                     label={STATUS_LABELS[status]}
                     applications={grouped[status] ?? []}
                     onDelete={remove}
+                    onArchive={archive}
                     onAddClick={openForm}
                   />
                 ))}
@@ -183,7 +191,7 @@ export default function BoardPage() {
                             e.stopPropagation();
                             changeStatus(app.id, "SAVED");
                           }}
-                          className="text-xs px-2.5 py-1 rounded-lg bg-primary/10 text-primary-darker hover:bg-primary/20 transition-colors"
+                          className="text-xs px-2.5 py-1 rounded-lg cursor-pointer bg-primary/10 text-primary-darker hover:bg-primary/20 transition-colors"
                         >
                           Restore
                         </button>
