@@ -11,6 +11,7 @@ import {
   BarChart2,
   UserCircle,
   type LucideIcon,
+  LogOut,
 } from "lucide-react";
 
 interface NavItem {
@@ -34,7 +35,7 @@ interface Props {
 }
 
 export default function AppShell({ children, headerLeft, headerRight }: Props) {
-  const { user, logout } = useAuthContext();
+  const { logout } = useAuthContext();
   const navigate = useNavigate();
 
   function handleLogout() {
@@ -77,22 +78,15 @@ export default function AppShell({ children, headerLeft, headerRight }: Props) {
         </nav>
 
         {/* User footer */}
-        <div className="px-6 py-6">
+        <div className="px-6 py-8 flex">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full hover:opacity-80 transition-opacity text-left"
+            className="flex items-center gap-2 cursor-pointer text-foreground/50 hover:text-red-400 hover:bg-background"
           >
-            <div className="w-9 h-9 rounded-full bg-primary-darker flex items-center justify-center text-white text-sm font-bold shrink-0">
-              {user?.email?.[0]?.toUpperCase() ?? "U"}
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-sm font-medium text-foreground truncate">
-                {user?.email?.split("@")[0] ?? "User"}
-              </span>
-              <span className="text-xs text-foreground/40 truncate">
-                {user?.email}
-              </span>
-            </div>
+            <LogOut size={20} />
+            <span className="text-sm font-medium transition-colors">
+              Log out
+            </span>
           </button>
         </div>
       </aside>

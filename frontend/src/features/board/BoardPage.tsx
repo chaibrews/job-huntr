@@ -9,6 +9,7 @@ import ApplicationForm from "../applications/ApplicationForm";
 import { Plus, Search } from "lucide-react";
 import CompanyAvatar from "../../components/CompanyAvatar";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../context/AuthContext";
 
 type Tab = "applications" | "offers" | "archived";
 
@@ -39,6 +40,7 @@ export default function BoardPage() {
   const [showForm, setShowForm] = useState(false);
   const [defaultStatus, setDefaultStatus] = useState<Status>("SAVED");
   const [search, setSearch] = useState("");
+  const { user } = useAuthContext();
 
   const navigate = useNavigate();
   // Filtered by search term
@@ -86,20 +88,25 @@ export default function BoardPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search"
-              className="pl-9 pr-4 py-2 text-sm bg-white border border-shadow rounded-lg
+              placeholder="Find by company, role, or tag…"
+              className="pl-9 pr-4 py-2 text-sm bg-white border border-shadow rounded-lg 
                        w-xl focus:outline-none focus:border-primary-darker/40 transition-colors"
             />
           </div>
         }
         headerRight={
-          <button
-            onClick={() => openForm("SAVED")}
-            className="primary-button flex items-center gap-1.5 px-4 text-sm"
-          >
-            <Plus size={15} />
-            <span className="text-sm">New Application</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => openForm("SAVED")}
+              className="primary-button border-2 px-4 border-primary flex items-center gap-1.5"
+            >
+              <Plus size={15} />
+              <span>New Application</span>
+            </button>
+            <div className="w-10 h-10 rounded-full bg-primary-darker/90 border-2 border-primary flex items-center justify-center text-white text-sm font-bold shrink-0">
+              {user?.email?.[0]?.toUpperCase() ?? "U"}
+            </div>
+          </div>
         }
       >
         {/* ── TABS ── */}
