@@ -124,6 +124,17 @@ export async function createTag(name: string, color: string): Promise<Tag> {
   return res.json();
 }
 
+export async function deleteTag(tagId: string): Promise<void> {
+  const res = await fetch(
+    `${import.meta.env.VITE_BACKEND_URL}/api/tags/${tagId}`,
+    {
+      method: "DELETE",
+      headers: authHeaders(),
+    },
+  );
+  if (!res.ok) throw new Error("Failed to delete tag");
+}
+
 export async function getUserTags(): Promise<Tag[]> {
   const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/tags`, {
     headers: authHeaders(),

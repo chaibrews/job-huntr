@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { MapPin, Plus, FileText, Trash2 } from "lucide-react";
+import { MapPin, Trash2 } from "lucide-react";
 import type { Application, Status, WorkSetup } from "../../types";
 import { getApplicationById } from "../../api/applications";
 import { useApplications } from "../../hooks/useApplications";

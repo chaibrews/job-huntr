@@ -4,8 +4,10 @@ import {
   getUserTags,
   createTag,
   attachTag,
+  deleteTag,
   detachTag,
 } from "../api/applications";
+import { Delete, Link2, Link2Off } from "lucide-react";
 
 const TAG_COLORS = [
   "#6D83DD",
@@ -76,6 +78,21 @@ export default function TagEditor({
     setOpen(false);
   }
 
+  async function handleDeleteTag(tagId: string) {
+    if (
+      !confirm(
+        "Delete this tag permanently? It will be removed from all applications.",
+      )
+    )
+      return;
+    await deleteTag(tagId); // call the API
+    setAllTags((prev) => prev.filter((t) => t.id !== tagId));
+    // If it was attached, also remove from local attached list
+    if (attachedIds.has(tagId)) {
+      onUpdate(attachedTags.filter((t) => t.id !== tagId));
+    }
+  }
+
   return (
     <div className="relative" ref={dropdownRef}>
       {/* Attached tags */}
@@ -110,29 +127,56 @@ export default function TagEditor({
       {/* Dropdown */}
       {open && (
         <div className="absolute z-10 top-full left-0 mt-1 w-56 bg-white border border-shadow rounded-xl shadow-lg p-3">
-          {/* Unattached existing tags */}
-          {unattached.map((tag) => (
-            <button
-              key={tag.id}
-              onClick={() => {
-                handleAttach(tag);
-                setOpen(false);
-              }}
-              className="w-full text-left text-xs px-2 py-1.5 rounded-lg hover:bg-background transition-colors flex items-center gap-2"
-            >
-              <span
-                className="w-2 h-2 rounded-full shrink-0"
-                style={{ backgroundColor: tag.color }}
-              />
-              #{tag.name}
-            </button>
-          ))}
-
+          {allTags.map((tag) => {
+            const isAttached = attachedIds.has(tag.id);
+            return (
+              <div
+                key={tag.id}
+                className="flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-background group"
+              >
+                <button
+                  onClick={() => {
+                    if (!isAttached) {
+                      handleAttach(tag);
+                      setOpen(false);
+                    }
+                  }}
+                  className="flex items-center gap-2 text-xs flex-1 text-left"
+                >
+                  <span
+                    className="w-2 h-2 rounded-full shrink-0"
+                    style={{ backgroundColor: tag.color }}
+                  />
+                  #{tag.name}
+                  {isAttached && (
+                    <span className="text-foreground/70 font-bold text-xs">
+                      <Link2 size={12} />
+                    </span>
+                  )}
+                  {!isAttached && (
+                    <span className="text-foreground/30 font-bold text-xs">
+                      <Link2Off size={12} />
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={() => handleDeleteTag(tag.id)}
+                  className="text-xs text-red-400 opacity-0 group-hover:opacity-100 transition-opacity hover:text-red-600 ml-2"
+                  title="Delete tag permanently"
+                >
+                  <Delete size={12} />
+                </button>
+              </div>
+            );
+          })}
           {/* Create new */}
           <div
             className={`${unattached.length > 0 ? "border-t border-shadow mt-2 pt-2" : ""}`}
           >
-            <p className="text-xs text-foreground/40 mb-1.5">Create new tag</p>
+            <div className="flex gap-2 text-xs mb-1.5">
+              <p className="text-foreground">Tags</p>
+              <p className=" text-foreground/40">Press Enter to create</p>
+            </div>
             <input
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
@@ -142,15 +186,16 @@ export default function TagEditor({
                   handleCreate();
                 }
               }}
-              placeholder="Tag name"
+              placeholder="e.g. dream role, nice office"
               className="w-full text-xs bg-background border border-shadow rounded-lg px-2 py-1.5 mb-2 focus:outline-none"
             />
-            <div className="flex gap-1 mb-2">
+            <div className="flex  gap-1.5 mb-1 ">
               {TAG_COLORS.map((c) => (
                 <button
                   key={c}
                   onClick={() => setTagColor(c)}
-                  className="w-4 h-4 rounded-full border-2 transition-all"
+                  className={`w-3 h-3 rounded-full border-2 transition-all cursor-pointer
+                  ${tagColor === c ? "ring-2 ring-offset-1 ring-primary scale-105" : ""}`}
                   style={{
                     backgroundColor: c,
                     borderColor: tagColor === c ? c : "transparent",
@@ -158,12 +203,6 @@ export default function TagEditor({
                 />
               ))}
             </div>
-            <button
-              onClick={handleCreate}
-              className="w-full text-xs secondary-button py-1.5"
-            >
-              Create & attach
-            </button>
           </div>
         </div>
       )}
