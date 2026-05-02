@@ -57,7 +57,14 @@ export function useApplications() {
       companyNotes: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      statusHistory: [],
+      statusHistory: [
+        {
+          id: `temp-history-${Date.now()}`,
+          from: data.status, // first entry — from and to are the same
+          to: data.status,
+          changedAt: new Date().toISOString(),
+        },
+      ],
       tags: data.tags?.map((t, i) => ({ ...t, id: `temp-tag-${i}` })) ?? [],
     };
 

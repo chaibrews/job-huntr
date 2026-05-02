@@ -110,6 +110,12 @@ export const createApplication = async (req: AuthRequest, res: Response) => {
       ...appFields,
       userId: req.userId!,
       companyId: company.id,
+      statusHistory: {
+        create: {
+          from: appFields.status ?? "SAVED",
+          to: appFields.status ?? "SAVED",
+        },
+      },
       tags:
         tagInputs && tagInputs.length > 0
           ? {
