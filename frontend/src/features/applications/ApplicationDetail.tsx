@@ -71,12 +71,32 @@ export default function ApplicationDetail() {
 
   async function handleStatusChange(status: Status) {
     if (!app) return;
-    setApp((p) => (p ? { ...p, status } : p)); // optimistic
+    const previous = app;
+
+    // Optimistically add the new history entry immediately
+    setApp((p) =>
+      p
+        ? {
+            ...p,
+            status,
+            statusHistory: [
+              ...p.statusHistory,
+              {
+                id: `temp-history-${Date.now()}`,
+                from: p.status,
+                to: status,
+                changedAt: new Date().toISOString(),
+              },
+            ],
+          }
+        : p,
+    );
+
     try {
       const updated = await changeStatus(app.id, status);
-      setApp(updated);
+      setApp(updated); // replace temp entry with real one from server
     } catch {
-      setApp(app); // rollback
+      setApp(previous); // rollback
     }
   }
 
