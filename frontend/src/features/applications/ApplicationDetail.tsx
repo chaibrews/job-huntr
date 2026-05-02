@@ -21,6 +21,8 @@ import MetaCard from "../../components/MetaCard";
 import InlineEdit from "../../components/InlineEdit";
 import TagInput from "../../components/TagInput";
 import ApplicationDetailSkeleton from "../../components/skeletons/ApplicationDetailSkeleton";
+import Toast from "../../components/Toast";
+import type { ToastType } from "../../components/Toast";
 
 const WORK_OPTIONS: { value: WorkSetup; label: string }[] = [
   { value: "ONSITE", label: "On-site" },
@@ -37,6 +39,10 @@ export default function ApplicationDetail() {
   const [app, setApp] = useState<Application | null>(cached);
   const [loading, setLoading] = useState(!app); // skip spinner if we have cached data
   const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ visible: boolean; type: ToastType }>({
+    visible: false,
+    type: "saved",
+  });
 
   // Initialize drafts from whatever we have — cache or null
   const [notesDraft, setNotesDraft] = useState(cached?.notes ?? "");
@@ -73,7 +79,6 @@ export default function ApplicationDetail() {
     if (!app) return;
     const previous = app;
 
-    // Optimistically add the new history entry immediately
     setApp((p) =>
       p
         ? {
@@ -92,11 +97,14 @@ export default function ApplicationDetail() {
         : p,
     );
 
+    setToast({ visible: true, type: status.toLowerCase() as ToastType });
+
     try {
       const updated = await changeStatus(app.id, status);
-      setApp(updated); // replace temp entry with real one from server
+      setApp(updated);
     } catch {
-      setApp(previous); // rollback
+      setApp(previous);
+      setToast({ visible: false, type: "saved" }); // hide on rollback
     }
   }
 
@@ -162,267 +170,276 @@ export default function ApplicationDetail() {
     );
 
   return (
-    <AppShell
-      headerLeft={
-        <button
-          onClick={() => navigate("/")}
-          className="text-xs text-foreground/50 hover:text-foreground/80 transition-colors"
-        >
-          ← Back
-        </button>
-      }
-      headerRight={
-        <button
-          onClick={handleDelete}
-          className="flex items-center gap-1.5 text-xs text-red-400 hover:text-red-500 transition-colors"
-        >
-          <Trash2 size={13} /> Delete
-        </button>
-      }
-    >
-      {/* ── HERO ── */}
-      <div className="rounded-xl p-5 mb-5 flex items-center gap-4 bg-primary-lighter">
-        <CompanyAvatar company={app.company} size="lg" />
-        <div className="flex-1 min-w-0">
-          <InlineEdit
-            display={
-              <h1 className="text-xl font-medium text-foreground leading-tight mb-0.5">
-                {app.role}
-              </h1>
-            }
-            value={roleDraft}
-            onChange={setRoleDraft}
-            onSave={() => handleFieldSave("role", roleDraft)}
-            placeholder="Job role"
-          />
-          <InlineEdit
-            display={
-              <p className="text-[14px] font-medium text-foreground/50">
-                {app.company}
-              </p>
-            }
-            value={companyDraft}
-            onChange={setCompanyDraft}
-            onSave={() => handleFieldSave("company", companyDraft)}
-            placeholder="Company name"
-          />
-          <InlineEdit
-            display={
-              app.location ? (
-                <p className="text-xs text-foreground/50 flex items-center ">
-                  <MapPin size={13} className="inline -mt-0.5 mr-1" />
-                  {app.location}
+    <>
+      <AppShell
+        headerLeft={
+          <button
+            onClick={() => navigate("/")}
+            className="text-xs text-foreground/50 hover:text-foreground/80 transition-colors"
+          >
+            ← Back
+          </button>
+        }
+        headerRight={
+          <button
+            onClick={handleDelete}
+            className="flex items-center gap-1.5 text-xs text-red-400 hover:text-red-500 transition-colors"
+          >
+            <Trash2 size={13} /> Delete
+          </button>
+        }
+      >
+        {/* ── HERO ── */}
+        <div className="rounded-xl p-5 mb-5 flex items-center gap-4 bg-primary-lighter">
+          <CompanyAvatar company={app.company} size="lg" />
+          <div className="flex-1 min-w-0">
+            <InlineEdit
+              display={
+                <h1 className="text-xl font-medium text-foreground leading-tight mb-0.5">
+                  {app.role}
+                </h1>
+              }
+              value={roleDraft}
+              onChange={setRoleDraft}
+              onSave={() => handleFieldSave("role", roleDraft)}
+              placeholder="Job role"
+            />
+            <InlineEdit
+              display={
+                <p className="text-[14px] font-medium text-foreground/50">
+                  {app.company}
                 </p>
-              ) : (
-                <p className="text-xs text-foreground/30 italic">
-                  Add location…
-                </p>
-              )
-            }
-            value={locationDraft}
-            onChange={setLocationDraft}
-            onSave={() => handleFieldSave("location", locationDraft)}
-            placeholder="Area, City"
-          />
-        </div>
-        <StatusPill status={app.status} />
-      </div>
-
-      {/* ── TWO-COLUMN LAYOUT ── */}
-      <div className="grid grid-cols-[1fr_300px] gap-5">
-        {/* ── LEFT COLUMN */}
-        <div className="flex flex-col gap-4">
-          {/* Status + Work Setup */}
-          <div className="grid grid-cols-2 gap-4">
-            <MetaCard label="Status">
-              <select
-                value={app.status}
-                onChange={(e) => handleStatusChange(e.target.value as Status)}
-                className="w-full bg-background border border-shadow rounded-lg px-3 py-2 text-sm
-                           focus:outline-none focus:border-primary-darker/50 appearance-none"
-              >
-                {ALL_STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {STATUS_LABELS[s]}
-                  </option>
-                ))}
-              </select>
-            </MetaCard>
-
-            <MetaCard label="Work Setup">
-              <select
-                value={app.workSetup ?? ""}
-                onChange={(e) =>
-                  handleWorkSetupChange(
-                    (e.target.value || null) as WorkSetup | null,
-                  )
-                }
-                className="w-full bg-background border border-shadow rounded-lg px-3 py-2 text-sm
-                           focus:outline-none focus:border-primary-darker/50 appearance-none"
-              >
-                <option value="">Not specified</option>
-                {WORK_OPTIONS.map(({ value, label }) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </MetaCard>
+              }
+              value={companyDraft}
+              onChange={setCompanyDraft}
+              onSave={() => handleFieldSave("company", companyDraft)}
+              placeholder="Company name"
+            />
+            <InlineEdit
+              display={
+                app.location ? (
+                  <p className="text-xs text-foreground/50 flex items-center ">
+                    <MapPin size={13} className="inline -mt-0.5 mr-1" />
+                    {app.location}
+                  </p>
+                ) : (
+                  <p className="text-xs text-foreground/30 italic">
+                    Add location…
+                  </p>
+                )
+              }
+              value={locationDraft}
+              onChange={setLocationDraft}
+              onSave={() => handleFieldSave("location", locationDraft)}
+              placeholder="Area, City"
+            />
           </div>
+          <StatusPill status={app.status} />
+        </div>
 
-          {/* Tags + Job Posting URL */}
-          <div className="grid grid-cols-2 gap-4">
-            <MetaCard label="Tags">
-              <TagInput
-                value={app.tags.map(({ name, color }) => ({ name, color }))}
-                onChange={async (tags) => {
-                  const updated = await update(app.id, { tags });
-                  setApp(updated);
-                }}
-              />
-            </MetaCard>
+        {/* ── TWO-COLUMN LAYOUT ── */}
+        <div className="grid grid-cols-[1fr_300px] gap-5">
+          {/* ── LEFT COLUMN */}
+          <div className="flex flex-col gap-4">
+            {/* Status + Work Setup */}
+            <div className="grid grid-cols-2 gap-4">
+              <MetaCard label="Status">
+                <select
+                  value={app.status}
+                  onChange={(e) => handleStatusChange(e.target.value as Status)}
+                  className="w-full bg-background border border-shadow rounded-lg px-3 py-2 text-sm
+                           focus:outline-none focus:border-primary-darker/50 appearance-none"
+                >
+                  {ALL_STATUSES.map((s) => (
+                    <option key={s} value={s}>
+                      {STATUS_LABELS[s]}
+                    </option>
+                  ))}
+                </select>
+              </MetaCard>
 
-            <MetaCard label="Job Posting URL">
+              <MetaCard label="Work Setup">
+                <select
+                  value={app.workSetup ?? ""}
+                  onChange={(e) =>
+                    handleWorkSetupChange(
+                      (e.target.value || null) as WorkSetup | null,
+                    )
+                  }
+                  className="w-full bg-background border border-shadow rounded-lg px-3 py-2 text-sm
+                           focus:outline-none focus:border-primary-darker/50 appearance-none"
+                >
+                  <option value="">Not specified</option>
+                  {WORK_OPTIONS.map(({ value, label }) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </MetaCard>
+            </div>
+
+            {/* Tags + Job Posting URL */}
+            <div className="grid grid-cols-2 gap-4">
+              <MetaCard label="Tags">
+                <TagInput
+                  value={app.tags.map(({ name, color }) => ({ name, color }))}
+                  onChange={async (tags) => {
+                    const updated = await update(app.id, { tags });
+                    setApp(updated);
+                  }}
+                />
+              </MetaCard>
+
+              <MetaCard label="Job Posting URL">
+                <InlineEdit
+                  display={
+                    app.url ? (
+                      <a
+                        href={app.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-primary-darker hover:underline truncate block"
+                      >
+                        {app.url.replace(/^https?:\/\//, "")}
+                      </a>
+                    ) : (
+                      <p className="text-xs text-foreground/30 italic">
+                        No link saved
+                      </p>
+                    )
+                  }
+                  value={app.url ?? ""}
+                  onChange={(v) => setApp((p) => (p ? { ...p, url: v } : p))}
+                  onSave={() => handleFieldSave("url", app.url)}
+                  placeholder="https://..."
+                />
+              </MetaCard>
+            </div>
+
+            {/* Job Description */}
+            <MetaCard label="Job Description">
               <InlineEdit
                 display={
-                  app.url ? (
-                    <a
-                      href={app.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-primary-darker hover:underline truncate block"
-                    >
-                      {app.url.replace(/^https?:\/\//, "")}
-                    </a>
+                  jobDescDraft ? (
+                    <p className="text-sm text-foreground/70 leading-relaxed whitespace-pre-wrap">
+                      {jobDescDraft}
+                    </p>
                   ) : (
                     <p className="text-xs text-foreground/30 italic">
-                      No link saved
+                      Paste the job description here…
                     </p>
                   )
                 }
-                value={app.url ?? ""}
-                onChange={(v) => setApp((p) => (p ? { ...p, url: v } : p))}
-                onSave={() => handleFieldSave("url", app.url)}
-                placeholder="https://..."
+                value={jobDescDraft}
+                onChange={setJobDescDraft}
+                onSave={() => handleFieldSave("jobDescription", jobDescDraft)}
+                multiline
+                placeholder="Paste the full job description…"
               />
             </MetaCard>
           </div>
 
-          {/* Job Description */}
-          <MetaCard label="Job Description">
-            <InlineEdit
-              display={
-                jobDescDraft ? (
-                  <p className="text-sm text-foreground/70 leading-relaxed whitespace-pre-wrap">
-                    {jobDescDraft}
-                  </p>
-                ) : (
-                  <p className="text-xs text-foreground/30 italic">
-                    Paste the job description here…
-                  </p>
-                )
-              }
-              value={jobDescDraft}
-              onChange={setJobDescDraft}
-              onSave={() => handleFieldSave("jobDescription", jobDescDraft)}
-              multiline
-              placeholder="Paste the full job description…"
-            />
-          </MetaCard>
-        </div>
+          {/* ── RIGHT COLUMN ── */}
+          <div className="flex flex-col gap-4">
+            {/* Application Timeline */}
+            <div className="bg-white rounded-lg border border-shadow p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground/40">
+                  Application Timeline
+                </h3>
+              </div>
 
-        {/* ── RIGHT COLUMN ── */}
-        <div className="flex flex-col gap-4">
-          {/* Application Timeline */}
-          <div className="bg-white rounded-lg border border-shadow p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground/40">
-                Application Timeline
-              </h3>
+              {app.statusHistory.length === 0 ? (
+                <p className="text-xs text-foreground/30 italic">
+                  No updates yet.
+                </p>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {[...app.statusHistory].reverse().map((h) => {
+                    const toCfg = STATUS_STYLES[h.to];
+                    const date = new Date(h.changedAt);
+                    const dayOfMonth = date.getDate();
+
+                    return (
+                      <div key={h.id} className="flex items-start gap-3">
+                        {/* Circle with date */}
+                        <div
+                          className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 mt-0.5"
+                          style={{ backgroundColor: toCfg.bg, color: toCfg.fg }}
+                        >
+                          {dayOfMonth}
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-foreground">
+                            {STATUS_LABELS[h.to]}
+                          </p>
+                          <p className="text-xs text-foreground/40">
+                            {date.toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
-            {app.statusHistory.length === 0 ? (
-              <p className="text-xs text-foreground/30 italic">
-                No updates yet.
-              </p>
-            ) : (
-              <div className="flex flex-col gap-3">
-                {[...app.statusHistory].reverse().map((h) => {
-                  const toCfg = STATUS_STYLES[h.to];
-                  const date = new Date(h.changedAt);
-                  const dayOfMonth = date.getDate();
+            <MetaCard label="Company Notes">
+              <InlineEdit
+                display={
+                  app.companyNotes ? (
+                    <p className="text-sm text-foreground/70 leading-relaxed whitespace-pre-wrap">
+                      {app.companyNotes}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-foreground/30 italic">
+                      Notes about this company…
+                    </p>
+                  )
+                }
+                value={companyNotesDraft}
+                onChange={setCompanyNotesDraft}
+                onSave={() =>
+                  handleFieldSave("companyNotes", companyNotesDraft)
+                }
+                multiline
+                placeholder="Add notes about this company..."
+              />
+            </MetaCard>
 
-                  return (
-                    <div key={h.id} className="flex items-start gap-3">
-                      {/* Circle with date */}
-                      <div
-                        className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 mt-0.5"
-                        style={{ backgroundColor: toCfg.bg, color: toCfg.fg }}
-                      >
-                        {dayOfMonth}
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium text-foreground">
-                          {STATUS_LABELS[h.to]}
-                        </p>
-                        <p className="text-xs text-foreground/40">
-                          {date.toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+            <MetaCard label="Application Notes">
+              <InlineEdit
+                display={
+                  notesDraft ? (
+                    <p className="text-sm text-foreground/70 leading-relaxed whitespace-pre-wrap">
+                      {notesDraft}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-foreground/30 italic">
+                      No notes yet. Hover to edit.
+                    </p>
+                  )
+                }
+                value={notesDraft}
+                onChange={setNotesDraft}
+                onSave={() => handleFieldSave("notes", notesDraft)}
+                multiline
+                placeholder="Add notes about this application…"
+              />
+            </MetaCard>
           </div>
-
-          <MetaCard label="Company Notes">
-            <InlineEdit
-              display={
-                app.companyNotes ? (
-                  <p className="text-sm text-foreground/70 leading-relaxed whitespace-pre-wrap">
-                    {app.companyNotes}
-                  </p>
-                ) : (
-                  <p className="text-xs text-foreground/30 italic">
-                    Notes about this company…
-                  </p>
-                )
-              }
-              value={companyNotesDraft}
-              onChange={setCompanyNotesDraft}
-              onSave={() => handleFieldSave("companyNotes", companyNotesDraft)}
-              multiline
-              placeholder="Add notes about this company..."
-            />
-          </MetaCard>
-
-          <MetaCard label="Application Notes">
-            <InlineEdit
-              display={
-                notesDraft ? (
-                  <p className="text-sm text-foreground/70 leading-relaxed whitespace-pre-wrap">
-                    {notesDraft}
-                  </p>
-                ) : (
-                  <p className="text-xs text-foreground/30 italic">
-                    No notes yet. Hover to edit.
-                  </p>
-                )
-              }
-              value={notesDraft}
-              onChange={setNotesDraft}
-              onSave={() => handleFieldSave("notes", notesDraft)}
-              multiline
-              placeholder="Add notes about this application…"
-            />
-          </MetaCard>
         </div>
-      </div>
-    </AppShell>
+      </AppShell>
+      <Toast
+        visible={toast.visible}
+        type={toast.type}
+        onHide={() => setToast((t) => ({ ...t, visible: false }))}
+      />
+    </>
   );
 }

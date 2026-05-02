@@ -10,6 +10,8 @@ import { Plus, Search } from "lucide-react";
 import CompanyAvatar from "../../components/CompanyAvatar";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
+import type { ToastType } from "../../components/Toast";
+import Toast from "../../components/Toast";
 
 type Tab = "applications" | "offers" | "archived";
 
@@ -38,10 +40,20 @@ export default function BoardPage() {
   } = useApplications();
   const [activeTab, setActiveTab] = useState<Tab>("applications");
   const [showForm, setShowForm] = useState(false);
+  const [toast, setToast] = useState<{ visible: boolean; type: ToastType }>({
+    visible: false,
+    type: "saved",
+  });
+
   const [defaultStatus, setDefaultStatus] = useState<Status>("SAVED");
   const [search, setSearch] = useState("");
   const { user } = useAuthContext();
   const navigate = useNavigate();
+
+  const openForm = useCallback((status: Status = "SAVED") => {
+    setDefaultStatus(status);
+    setShowForm(true);
+  }, []);
 
   const handleDelete = useCallback((id: string) => remove(id), [remove]);
   const handleArchive = useCallback((id: string) => archive(id), [archive]);
@@ -84,11 +96,6 @@ export default function BoardPage() {
     KANBAN_STATUSES.includes(s),
   );
 
-  function openForm(status: Status = "SAVED") {
-    setDefaultStatus(status);
-    setShowForm(true);
-  }
-
   return (
     <div className="min-h-screen">
       <AppShell
@@ -112,7 +119,7 @@ export default function BoardPage() {
         headerRight={
           <div className="flex items-center gap-2">
             <button
-              onClick={() => openForm("SAVED")}
+              onClick={() => handleAddClick("SAVED")}
               className="primary-button border-2 px-4 border-primary flex items-center gap-1.5"
             >
               <Plus size={15} />
@@ -231,9 +238,13 @@ export default function BoardPage() {
             defaultStatus={defaultStatus}
             onClose={() => setShowForm(false)}
             onCreate={async (data) => {
-              setShowForm(false); // close the modal instantly
+              setShowForm(false);
+              setToast({
+                visible: true,
+                type: data.status.toLowerCase() as ToastType,
+              });
               try {
-                await create(data); // call the hook’s create function
+                await create(data);
               } catch (err) {
                 console.error("Failed to create application", err);
               }
@@ -241,6 +252,11 @@ export default function BoardPage() {
           />
         )}
       </AppShell>
+      <Toast
+        visible={toast.visible}
+        type={toast.type}
+        onHide={() => setToast((t) => ({ ...t, visible: false }))}
+      />
     </div>
   );
 }
