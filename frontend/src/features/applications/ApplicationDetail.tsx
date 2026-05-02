@@ -19,7 +19,7 @@ import CompanyAvatar from "../../components/CompanyAvatar";
 import StatusPill from "../../components/StatusPill";
 import MetaCard from "../../components/MetaCard";
 import InlineEdit from "../../components/InlineEdit";
-import TagEditor from "../../components/TagEditor";
+import TagInput from "../../components/TagInput";
 
 const WORK_OPTIONS: { value: WorkSetup; label: string }[] = [
   { value: "ONSITE", label: "On-site" },
@@ -236,10 +236,12 @@ export default function ApplicationDetail() {
           {/* Tags + Job Posting */}
           <div className="grid grid-cols-2 gap-4">
             <MetaCard label="Tags">
-              <TagEditor
-                applicationId={app.id}
-                attachedTags={app.tags}
-                onUpdate={(tags) => setApp((p) => (p ? { ...p, tags } : p))}
+              <TagInput
+                value={app.tags.map(({ name, color }) => ({ name, color }))}
+                onChange={async (tags) => {
+                  const updated = await update(app.id, { tags });
+                  setApp(updated);
+                }}
               />
             </MetaCard>
 

@@ -14,7 +14,6 @@ function authHeaders(): HeadersInit {
 export type TagInput = { name: string; color: string };
 
 // Defines a type for creating new applications
-// Uses Omit to remove fields that the server generates automatically
 export type CreateApplicationInput = {
   company: string;
   role: string;
@@ -94,30 +93,6 @@ export async function deleteApplication(id: string): Promise<void> {
     headers: authHeaders(),
   });
   if (!res.ok) throw new Error("Failed to delete");
-}
-
-export async function attachTag(
-  appId: string,
-  tagId: string,
-): Promise<Application> {
-  const res = await fetch(`${BASE}/${appId}/tags/${tagId}`, {
-    method: "POST",
-    headers: authHeaders(),
-  });
-  if (!res.ok) throw new Error("Failed to attach tag");
-  return res.json();
-}
-
-export async function detachTag(
-  appId: string,
-  tagId: string,
-): Promise<Application> {
-  const res = await fetch(`${BASE}/${appId}/tags/${tagId}`, {
-    method: "DELETE",
-    headers: authHeaders(),
-  });
-  if (!res.ok) throw new Error("Failed to detach tag");
-  return res.json();
 }
 
 export async function createTag(name: string, color: string): Promise<Tag> {
