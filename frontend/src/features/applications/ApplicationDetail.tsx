@@ -20,6 +20,7 @@ import StatusPill from "../../components/StatusPill";
 import MetaCard from "../../components/MetaCard";
 import InlineEdit from "../../components/InlineEdit";
 import TagInput from "../../components/TagInput";
+import ApplicationDetailSkeleton from "../../components/skeletons/ApplicationDetailSkeleton";
 
 const WORK_OPTIONS: { value: WorkSetup; label: string }[] = [
   { value: "ONSITE", label: "On-site" },
@@ -123,14 +124,7 @@ export default function ApplicationDetail() {
 
   // ── render states ──────────────────────────────────────
 
-  if (loading)
-    return (
-      <AppShell>
-        <div className="flex items-center justify-center h-full">
-          <p className="text-sm text-primary animate-pulse">Loading…</p>
-        </div>
-      </AppShell>
-    );
+  if (loading) return <ApplicationDetailSkeleton />;
 
   if (error || !app)
     return (

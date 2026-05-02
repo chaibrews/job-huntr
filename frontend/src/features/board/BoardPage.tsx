@@ -3,6 +3,7 @@ import type { Status, Application } from "../../types";
 import { useApplications } from "../../hooks/useApplications";
 import { KANBAN_STATUSES, STATUS_LABELS } from "../../constants/status";
 import AppShell from "../../components/AppShell";
+import BoardSkeleton from "../../components/skeletons/BoardSkeleton";
 import BoardColumn from "./BoardColumn";
 import ApplicationForm from "../applications/ApplicationForm";
 import { Plus, Search } from "lucide-react";
@@ -142,30 +143,7 @@ export default function BoardPage() {
 
         {/* ── BOARD ── */}
 
-        {loading && (
-          <div
-            className="grid gap-5"
-            style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}
-          >
-            {[1, 2, 3].map((col) => (
-              <div key={col} className="flex flex-col gap-3">
-                <div className="h-6 w-24 bg-primary/10 rounded-md animate-pulse" />
-                {[1, 2, 3].map((row) => (
-                  <div
-                    key={row}
-                    className="bg-white/50 rounded-xl p-4 animate-pulse"
-                  >
-                    <div className="flex items-center gap-2.5 mb-3">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10" />
-                      <div className="h-4 w-28 bg-primary/10 rounded" />
-                    </div>
-                    <div className="h-4 w-40 bg-primary/10 rounded" />
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        )}
+        {loading && <BoardSkeleton />}
 
         {error && (
           <p className="text-sm text-red-400 text-center py-12">{error}</p>
