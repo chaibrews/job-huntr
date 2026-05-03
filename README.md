@@ -1,7 +1,7 @@
 <div align="center">
 
   <a href="https://github.com/github_username/repo_name">
-    <img src="public/huntr-logo.svg" alt="Logo" width="80" height="80">
+    <img src="frontend/public/huntr-logo.svg" alt="Logo" width="80" height="80">
   </a>
   
   <h3 align="center" style="margin-top: 0px;">huntR</h3>
