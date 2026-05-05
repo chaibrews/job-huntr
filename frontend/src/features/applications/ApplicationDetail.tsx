@@ -299,7 +299,7 @@ export default function ApplicationDetail() {
                         href={app.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-primary-darker hover:underline truncate block"
+                        className="text-sm text-primary-darker hover:underline block break-all"
                       >
                         {app.url.replace(/^https?:\/\//, "")}
                       </a>

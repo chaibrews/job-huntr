@@ -36,8 +36,8 @@ export default function InlineEdit({
 
   if (!editing) {
     return (
-      <div className="group flex items-start justify-between gap-2">
-        <div className="flex-1">{display}</div>
+      <div className="group flex items-start justify-between gap-2 min-w-0">
+        <div className="flex-1  min-w-0 overflow-hidden">{display}</div>
         <button
           onClick={() => setEditing(true)}
           className="text-xs text-primary-darker opacity-0 group-hover:opacity-100 transition-opacity shrink-0 hover:underline"
