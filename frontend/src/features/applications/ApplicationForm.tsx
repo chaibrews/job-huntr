@@ -133,15 +133,15 @@ export default function ApplicationForm({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/20 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-foreground/20 p-4 backdrop-blur-sm"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="w-full max-w-lg bg-white rounded-xl shadow-2xl border border-shadow overflow-hidden">
+      <div className="my-auto w-full max-w-lg overflow-hidden rounded-xl border border-shadow bg-white shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-shadow">
-          <div>
+        <div className="flex items-start justify-between gap-4 border-b border-shadow px-4 py-4 sm:px-6">
+          <div className="min-w-0">
             <h2 className="text-base text-foreground">New Application</h2>
             <p className="text-xs text-foreground/40 mt-0.5">
               Track a new job you're interested in
@@ -158,9 +158,12 @@ export default function ApplicationForm({
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="px-6 py-5 flex flex-col gap-4">
+        <form
+          onSubmit={handleSubmit}
+          className="flex max-h-[calc(100vh-8rem)] flex-col gap-4 overflow-y-auto px-4 py-5 sm:px-6"
+        >
           {/* Row 1 */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Company" required>
               <Autocomplete
                 value={company}
@@ -188,7 +191,7 @@ export default function ApplicationForm({
           </div>
 
           {/* Row 2 */}
-          <div className="grid gap-3 grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Location">
               <Autocomplete
                 value={location}
@@ -216,7 +219,7 @@ export default function ApplicationForm({
           </div>
 
           {/* Row 3 */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Job Posting URL">
               <input
                 type="url"
@@ -228,7 +231,7 @@ export default function ApplicationForm({
             </Field>
 
             <div
-              className={`grid gap-3 ${status !== "SAVED" ? "grid-cols-2" : "grid-cols-1"}`}
+              className={`grid gap-3 ${status !== "SAVED" ? "sm:grid-cols-2" : "grid-cols-1"}`}
             >
               <Field label="Status">
                 <select
@@ -308,7 +311,7 @@ export default function ApplicationForm({
             </p>
           )}
 
-          <div className="flex gap-3 pt-1">
+          <div className="flex flex-col gap-3 pt-1 sm:flex-row">
             <button
               type="button"
               onClick={onClose}
@@ -320,7 +323,7 @@ export default function ApplicationForm({
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 primary-button py-2 text-sm"
+              className="flex-1 primary-button text-sm py-2 text-sm"
             >
               {loading ? "Adding…" : "Add Application"}
             </button>

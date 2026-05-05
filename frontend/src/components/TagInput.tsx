@@ -52,9 +52,11 @@ export default function TagInput({ value, onChange, className }: Props) {
   function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if ((e.key === "Enter" || e.key === ",") && input.trim()) {
       e.preventDefault();
-      suggestions.length > 0
-        ? add(suggestions[0].name, suggestions[0].color)
-        : add(input.trim(), randomColor());
+      if (suggestions.length > 0) {
+        add(suggestions[0].name, suggestions[0].color);
+      } else {
+        add(input.trim(), randomColor());
+      }
     }
     if (e.key === "Backspace" && !input) {
       onChange(value.slice(0, -1));

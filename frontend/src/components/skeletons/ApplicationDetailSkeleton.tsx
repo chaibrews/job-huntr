@@ -4,7 +4,7 @@ export default function ApplicationDetailSkeleton() {
   return (
     <AppShell>
       <div className="animate-pulse">
-        <div className="rounded-xl p-5 mb-5 mt-12 flex items-center gap-4 bg-primary-lighter">
+        <div className="mb-5 mt-4 flex flex-col gap-4 rounded-xl bg-primary-lighter p-4 sm:mt-12 sm:flex-row sm:items-center sm:p-5">
           <div className="w-12 h-12 rounded-xl bg-primary/20 shrink-0" />
           <div className="flex-1 flex flex-col gap-2">
             <div className="h-5 w-48 bg-primary/20 rounded-md" />
@@ -14,9 +14,9 @@ export default function ApplicationDetailSkeleton() {
           <div className="h-6 w-20 bg-primary/20 rounded-full" />
         </div>
 
-        <div className="grid grid-cols-[1fr_300px] gap-5">
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
           <div className="flex flex-col gap-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               {[1, 2].map((i) => (
                 <div
                   key={i}
@@ -27,7 +27,7 @@ export default function ApplicationDetailSkeleton() {
                 </div>
               ))}
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               {[1, 2].map((i) => (
                 <div
                   key={i}

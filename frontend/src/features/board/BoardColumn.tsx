@@ -28,7 +28,9 @@ function BoardColumn({
       {/* Column header */}
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
-          <h3 className="text-[16px] font-medium text-foreground">{label}</h3>
+          <h3 className="md:text-[16px] font-medium text-foreground">
+            {label}
+          </h3>
           <span
             className="w-5 h-5 rounded-full bg-primary/15 text-primary-darker
                            text-xs font-semibold flex items-center justify-center"

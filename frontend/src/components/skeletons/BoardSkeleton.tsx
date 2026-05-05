@@ -11,7 +11,10 @@ export default function BoardSkeleton() {
       {/* Columns */}
       <div
         className="grid gap-5"
-        style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}
+        style={{
+          gridTemplateColumns:
+            "repeat(auto-fit, minmax(min(100%, 18rem), 1fr))",
+        }}
       >
         {[1, 2, 3].map((col) => (
           <div key={col} className="flex flex-col gap-3">

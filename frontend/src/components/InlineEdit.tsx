@@ -40,7 +40,7 @@ export default function InlineEdit({
         <div className="flex-1  min-w-0 overflow-hidden">{display}</div>
         <button
           onClick={() => setEditing(true)}
-          className="text-xs text-primary-darker opacity-0 group-hover:opacity-100 transition-opacity shrink-0 hover:underline"
+          className="text-xs text-primary-darker transition-opacity shrink-0 hover:underline sm:opacity-0 sm:group-hover:opacity-100"
         >
           Edit
         </button>

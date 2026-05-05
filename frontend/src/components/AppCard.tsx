@@ -66,7 +66,7 @@ function AppCard({ app, onDelete, onArchive }: Props) {
             onClick={() => setMenuOpen((o) => !o)}
             className="w-6 h-6 rounded-md flex items-center justify-center cursor-pointer
                        text-foreground/30 hover:text-foreground/60 hover:bg-background
-                       transition-colors opacity-0 group-hover:opacity-100"
+                       transition-colors sm:opacity-0 sm:group-hover:opacity-100"
           >
             <MoreHorizontal size={14} />
           </button>
@@ -75,7 +75,7 @@ function AppCard({ app, onDelete, onArchive }: Props) {
             <div className="absolute right-0 top-7 z-20 bg-white border border-shadow rounded-lg shadow-lg overflow-hidden w-40">
               <button
                 onClick={(e) => {
-                  e.stopPropagation;
+                  e.stopPropagation();
                   onArchive(app.id);
                   setMenuOpen(false);
                 }}
@@ -106,7 +106,7 @@ function AppCard({ app, onDelete, onArchive }: Props) {
       </div>
 
       {/* Role */}
-      <p className="text-[16px] font-normal text-foreground leading-snug">
+      <p className="break-words text-[16px] font-normal text-foreground leading-snug">
         {app.role}
       </p>
 

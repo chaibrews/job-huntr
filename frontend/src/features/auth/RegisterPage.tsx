@@ -64,7 +64,11 @@ export default function RegisterPage() {
           {/* Only shown when there's an error */}
           {error && <p className="text-sm text-red-400">{error}</p>}
 
-          <button type="submit" disabled={loading} className="primary-button ">
+          <button
+            type="submit"
+            disabled={loading}
+            className="primary-button text-sm"
+          >
             {loading ? "Creating account..." : "Create Account"}
           </button>
         </form>

@@ -67,7 +67,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="primary-button disabled:opacity-50"
+            className="primary-button text-sm disabled:opacity-50"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>
