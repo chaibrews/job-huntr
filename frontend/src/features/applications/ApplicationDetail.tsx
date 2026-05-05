@@ -161,7 +161,7 @@ export default function ApplicationDetail() {
           <p className="text-sm text-red-400">{error ?? "Not found"}</p>
           <button
             onClick={() => navigate("/")}
-            className="primary-button px-6 py-2 text-sm"
+            className="primary-button text-sm px-6 py-2"
           >
             Back to board
           </button>
@@ -190,12 +190,12 @@ export default function ApplicationDetail() {
         }
       >
         {/* ── HERO ── */}
-        <div className="rounded-xl p-5 mb-5 flex items-center gap-4 bg-primary-lighter">
+        <div className="mb-5 flex flex-col gap-4 rounded-xl bg-primary-lighter p-4 sm:flex-row sm:items-center sm:p-5">
           <CompanyAvatar company={app.company} size="lg" />
           <div className="flex-1 min-w-0">
             <InlineEdit
               display={
-                <h1 className="text-xl font-medium text-foreground leading-tight mb-0.5">
+                <h1 className="break-words text-lg md:text-xl font-medium text-foreground leading-tight mb-0.5">
                   {app.role}
                 </h1>
               }
@@ -206,7 +206,7 @@ export default function ApplicationDetail() {
             />
             <InlineEdit
               display={
-                <p className="text-[14px] font-medium text-foreground/50">
+                <p className="text-sm font-medium text-foreground/50 mb-0.5">
                   {app.company}
                 </p>
               }
@@ -234,15 +234,18 @@ export default function ApplicationDetail() {
               placeholder="Area, City"
             />
           </div>
-          <StatusPill status={app.status} />
+          <StatusPill
+            status={app.status}
+            className="self-start sm:self-center"
+          />
         </div>
 
         {/* ── TWO-COLUMN LAYOUT ── */}
-        <div className="grid grid-cols-[1fr_300px] gap-5">
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
           {/* ── LEFT COLUMN */}
           <div className="flex flex-col gap-4">
             {/* Status + Work Setup */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <MetaCard label="Status">
                 <select
                   value={app.status}
@@ -280,7 +283,7 @@ export default function ApplicationDetail() {
             </div>
 
             {/* Tags + Job Posting URL */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <MetaCard label="Tags">
                 <TagInput
                   value={app.tags.map(({ name, color }) => ({ name, color }))}

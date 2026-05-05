@@ -14,7 +14,7 @@ export default function StatusPill({ status, className = "" }: Props) {
   const { bg, fg } = STATUS_STYLES[status];
   return (
     <span
-      className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${className}`}
+      className={`whitespace-nowrap text-xs font-semibold px-3 py-1.5 rounded-full border ${className}`}
       style={{ backgroundColor: bg, color: fg, borderColor: fg + "60" }}
     >
       {STATUS_LABELS[status]}

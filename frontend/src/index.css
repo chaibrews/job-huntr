@@ -34,7 +34,7 @@
 @layer utilities {
   .primary-button {
     @apply rounded-lg cursor-pointer py-2 transition-all duration-300
-          text-white text-sm  bg-primary-darker hover:bg-primary-darker/90
+          text-white  bg-primary-darker hover:bg-primary-darker/90
           disabled:opacity-50 hover:shadow-[0_0_10px_rgba(139,92,246,0.5)];
   }
 
