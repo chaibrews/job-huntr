@@ -9,7 +9,7 @@ import ApplicationForm from "../applications/ApplicationForm";
 import { Plus, Search } from "lucide-react";
 import CompanyAvatar from "../../components/CompanyAvatar";
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "../../context/AuthContext";
+// import { useAuthContext } from "../../context/AuthContext";
 import type { ToastType } from "../../components/Toast";
 import Toast from "../../components/Toast";
 
